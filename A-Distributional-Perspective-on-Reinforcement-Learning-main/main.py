@@ -2,7 +2,7 @@
 """
 Created on Wed Nov  4 23:23:53 2020
 
-@author: Abdelhamid 
+@author: Abdelhamid Bouzid
 """
 import gym
 import numpy as np
