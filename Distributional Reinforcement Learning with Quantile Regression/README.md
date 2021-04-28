@@ -1,4 +1,4 @@
-# A-Distributional-Perspective-on-Reinforcement-Learning
+# Distributional Reinforcement Learning with Quantile Regression
 A Distributional Perspective on Reinforcement Learning
 
 This folder contains an implemation of "Distributional Reinforcement Learning with Quantile Regression". 
