@@ -33,8 +33,8 @@ class Agent(object):
         
         self.memory = Buffer(self.max_size, self.input_dims)
         
-        self.eval_model = DeepQnetwork(self.lr, self.input_dims, self.n_actions, self.N, self.hiddens)
-        self.next_model = DeepQnetwork(self.lr, self.input_dims, self.n_actions, self.N, self.hiddens)
+        self.eval_model = DeepQnetwork(self.lr, self.input_dims, self.n_actions, self.N)
+        self.next_model = DeepQnetwork(self.lr, self.input_dims, self.n_actions, self.N)
         
         self.atoms      = T.unsqueeze(T.from_numpy(np.array([[self.Vmin + i * self.delta_z for i in range(self.N)]])), 2).float().to(self.eval_model.device)
         
