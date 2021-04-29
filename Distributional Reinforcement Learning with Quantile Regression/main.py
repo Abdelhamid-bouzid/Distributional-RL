@@ -12,7 +12,7 @@ from plot import plot_epi_step
 
 if __name__ == '__main__':
     
-    env             = gym.make('CartPole-v0')
+    env             = gym.make('PongNoFrameskip-v4')
     
     best_score      = -np.inf
     n_games         = 1000000
