@@ -6,7 +6,7 @@ Created on Wed Nov  4 21:34:24 2020
 """
 import numpy as np
 import torch as T
-from models.DeepQnetwork import DeepQnetwork
+from DeepQnetwork import DeepQnetwork
 from Buffer import Buffer
 
 class Agent(object):
