@@ -34,8 +34,8 @@ class Agent(object):
         
         self.memory = Buffer(self.max_size, self.input_dims)
         
-        self.eval_model = DeepQnetwork(self.lr, self.input_dims, self.n_actions, self.N, self.hiddens)
-        self.next_model = DeepQnetwork(self.lr, self.input_dims, self.n_actions, self.N, self.hiddens)
+        self.eval_model = DeepQnetwork(self.lr, self.input_dims, self.n_actions, self.N)
+        self.next_model = DeepQnetwork(self.lr, self.input_dims, self.n_actions, self.N)
         
         self.loss_fn    = T.nn.SmoothL1Loss(reduction='none')
         
