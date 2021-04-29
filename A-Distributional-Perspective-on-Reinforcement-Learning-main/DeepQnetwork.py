@@ -17,7 +17,7 @@ import torch.optim as optim
 import numpy as np
 
 class DeepQnetwork(nn.Module):
-    def __init__(self, lr, n_actions, input_dim, N, check_dir, model_name):
+    def __init__(self, lr, input_dim, n_actions, N):
         super(DeepQnetwork, self).__init__()
         
         self.check_dir = check_dir
