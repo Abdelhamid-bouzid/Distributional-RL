@@ -27,7 +27,7 @@ class Agent(object):
         self.N          = N
         # quantiles
         self.QUANTS          = np.linspace(0.0, 1.0, self.N + 1)[1:]
-        self.QUANTS_TARGET   = torch.FloatTensor((np.linspace(0.0, 1.0, self.N + 1)[:-1] + QUANTS)/2).view(1, -1) # (1, N_QUANT)
+        self.QUANTS_TARGET   = torch.FloatTensor((np.linspace(0.0, 1.0, self.N + 1)[:-1] + QUANTS)/2).view(1, -1,-1) # (1, N_QUANT,1)
         self.hiddens    = hiddens
         
         self.learn_step_cntr = 0
@@ -71,16 +71,18 @@ class Agent(object):
         '''######################################### the prediction  output###########################'''
         Q_pred = self.eval_model(states)    #(batch_size,n_actions,n_quants)
         Q_pred = Q_pred[indices,actions,:]  #(batch_size,n_quants)
+        Q_pred = Q_pred.unsqueeze(2)        #(batch_size,n_quants, 1)
         
         '''######################################### determine best action t###########################'''
-        Q_next        = self.next_model(n_states)   #(batch_size,n_actions, n_quants)
+        Q_next        = self.next_model(n_states)        #(batch_size,n_actions, n_quants)
         best_actions  = Q_next.mean(dim=2).argmax(dim=1) # (batch_size)
         Q_next        = Q_next[indices,best_actions,:]   #(batch_size, n_quants)
-        Q_target      = rewards + self.gamma*Q_next
+        Q_target      = rewards + self.gamma*Q_next      #(batch_size, n_quants)
+        Q_target      = Q_target.unsqueeze(1)            # (batch_size , 1, n_quants)
         
         '''######################################### compute quantile Huber loss ###########################'''
-        error  = Q_target - Q_pred
-        weight = torch.abs(self.QUANTS_TARGET - error.le(0.).float()) # (batch_size, n_quants)
+        error  = Q_target.detach() - Q_pred                           # (batch_size , n_quants, n_quants)
+        weight = torch.abs(self.QUANTS_TARGET - error.le(0.).float()) # (batch_size, n_quants, n_quants)
         loss   = (self.loss_fn (Q_target, Q_pred)*weight).mean()
         
         loss.backward()
