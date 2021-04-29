@@ -17,11 +17,12 @@ import torch.optim as optim
 import numpy as np
 
 class DeepQnetwork(nn.Module):
-    def __init__(self, lr, n_actions, input_dim, check_dir, model_name):
+    def __init__(self, lr, n_actions, input_dim, N, check_dir, model_name):
         super(DeepQnetwork, self).__init__()
         
         self.check_dir = check_dir
         self.path      = os.path.join(check_dir,model_name)
+        self.N         = N
         
         self.conv1     = nn.Conv2d(input_dim[0], 32, 8, stride=4)
         self.conv2     = nn.Conv2d(32, 64, 4, stride=2)
@@ -30,7 +31,7 @@ class DeepQnetwork(nn.Module):
         fc_input_dims  = self.calculate_conv_output_dims(input_dim)
         
         self.fc1       = nn.Linear(fc_input_dims, 512)
-        self.fc2       = nn.Linear(512, n_actions)
+        self.fc2       = nn.Linear(512, n_actions*self.N)
         
         self.optimizer = optim.Adam(self.parameters(), lr=lr)
         self.loss      = nn.MSELoss()
@@ -46,9 +47,13 @@ class DeepQnetwork(nn.Module):
         x = x.view(x.size()[0], -1)
         
         x = F.relu(self.fc1(x))
-        actions = F.relu(self.fc2(x))
+        x = self.fc2(x)
+        x = x.reshape(-1, self.action_size, self.N)
         
-        return actions
+        output     = F.softmax(x, dim = -1)
+        log_output = F.log_softmax(x, dim = -1)
+ 
+        return output, log_output
     
     def calculate_conv_output_dims(self, input_dim):
         state = T.zeros(1, *input_dim)
